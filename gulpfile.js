@@ -1,4 +1,6 @@
 // generated on 2016-12-22 using generator-webapp 2.3.2
+'use strict';
+
 const gulp = require('gulp');
 const inject = require('gulp-inject');
 const gulpLoadPlugins = require('gulp-load-plugins');
@@ -39,8 +41,8 @@ gulp.task('scripts', () => {
 
 gulp.task('inject', function() {
   gulp.src('app/*.html')
-    .pipe(inject(gulp.src('app/partials/head.html'), {starttag: '<!-- inject:head -->', transform: function (filePath, file) { return file.contents.toString('utf8')}}))
-    .pipe(inject(gulp.src('app/partials/body-end.html'), {starttag: '<!-- inject:body-end -->', transform: function (filePath, file) { return file.contents.toString('utf8')}}))
+    .pipe(inject(gulp.src('./app/partials/head.html'), {starttag: '<!-- inject:head -->', transform: function (filePath, file) { return file.contents.toString('utf8')}}))
+    .pipe(inject(gulp.src('./app/partials/body-end.html'), {starttag: '<!-- inject:body-end -->', transform: function (filePath, file) { return file.contents.toString('utf8')}}))
     .pipe(gulp.dest('.tmp'));
 });
 
@@ -61,8 +63,8 @@ gulp.task('lint:test', () => {
     .pipe(gulp.dest('test/spec'));
 });
 
-gulp.task('html', ['inject', 'styles', 'scripts'], () => {
-  return gulp.src('app/**/*.html')
+gulp.task('html', ['styles', 'scripts', 'inject'], () => {
+  return gulp.src(['app/*.html', '!app/**/_*.html', '.tmp/*.html'])
     .pipe($.useref({searchPath: ['.tmp', 'app', '.']}))
     .pipe($.if('*.js', $.uglify()))
     .pipe($.if('*.css', $.cssnano({safe: true, autoprefixer: false})))
@@ -165,7 +167,7 @@ gulp.task('wiredep', () => {
     .pipe(gulp.dest('app'));
 });
 
-gulp.task('build', ['lint', 'html', 'inject', 'images', 'fonts', 'extras'], () => {
+gulp.task('build', ['lint', 'html', 'images', 'fonts', 'extras'], () => {
   return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true}));
 });
 
